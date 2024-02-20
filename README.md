@@ -1,5 +1,5 @@
 # gpt-vision
-A simple wrapper around OpenAI's GPT-3 API to generate image descriptions.
+A simple wrapper around OpenAI's GPT-4-vision API to generate image descriptions.
 
 ### Run:
 * Define your API key in config.json  
