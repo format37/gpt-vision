@@ -2,55 +2,75 @@ import base64
 import requests
 import json
 
-# Read openai api key from config.json
-with open("config.json") as f:
-    data = json.load(f)
-api_key = data["api_key"].strip()
-model = data["model"]
-
-# Function to encode the image
-def encode_image(image_path):
-  with open(image_path, "rb") as image_file:
-    return base64.b64encode(image_file.read()).decode('utf-8')
-
-# Path to your image
-image_path = "sample.jpg"
-
-# Getting the base64 string
-base64_image = encode_image(image_path)
-
-headers = {
-  "Content-Type": "application/json",
-  "Authorization": f"Bearer {api_key}"
-}
-
-payload = {
-  "model": model,
-  "messages": [
-    {
-      "role": "user",
-      "content": [
+def append_message(messages, role, text, image_url):
+    messages.append(
         {
-          "type": "text",
-          "text": "Пожалуйста, опишите максимально детально, что вы видите на этом изображении?"
-        },
-        {
-          "type": "image_url",
-          "image_url": {
-            "url": f"data:image/jpeg;base64,{base64_image}"
-          }
+            "role": role,
+            "content": [
+                {"type": "text", "text": text},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": image_url
+                    }
+                },
+            ],
         }
-      ]
+    )
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+def main():
+    # Read openai api key from config.json
+    with open("config.json") as f:
+        data = json.load(f)
+    api_key = data["api_key"].strip()
+    model = data["model"]
+
+    # text = "Пожалуйста, опишите максимально детально, что вы видите на этом изображении?"
+    text = "Please, solve these equations and tell me what the difference between them."
+    messages = []
+
+    # Path to your image
+    # image_path = "sample.jpg"
+    image_path = "equation_a.jpg"
+    base64_image = encode_image(image_path)
+    image_url = f"data:image/jpeg;base64,{base64_image}"    
+    append_message(
+        messages, 
+        "user",
+        text,
+        image_url
+    )
+
+    image_path = "equation_b.jpg"
+    base64_image = encode_image(image_path)
+    image_url = f"data:image/jpeg;base64,{base64_image}"    
+    append_message(
+        messages, 
+        "user",
+        text,
+        image_url
+    )
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
     }
-  ],
-  "max_tokens": 300
-}
 
-response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-# print(f'response: {response}')
-# response_json = response.json()
-# print(f'response_json: {response_json}')
-# print(f'response_json["choices"]: {response_json["choices"]}')
+    response = requests.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers=headers,
+        json={
+            "model": model,
+            "messages": messages,
+            "max_tokens": 2000
+        }
+    )
 
+    print(response.json())
 
-print(response.json())
+if __name__ == "__main__":
+    main()

@@ -19,7 +19,7 @@ def append_message(messages, role, text, image_url, detail):
     )
 
 
-def main()
+def main():
     # Read openai api key from config.json
     with open("config.json") as f:
         data = json.load(f)
@@ -30,7 +30,15 @@ def main()
     text = "Please, solve these equations and tell me what the difference between them."
     messages = []
 
-    image_url = "https://github.com/format37/gpt-vision/blob/f93753c1f7cd88597839804be2aa564295535cc3/sample.jpg?raw=true"
+    image_url = 'https://github.com/format37/gpt-vision/blob/6bbcad3a08657515dd0f078fb58e4c852405d133/equation_a.jpg?raw=true'
+    append_message(
+        messages, 
+        "user",
+        text,
+        image_url,
+        "high"
+    )
+    image_url = 'https://github.com/format37/gpt-vision/blob/6bbcad3a08657515dd0f078fb58e4c852405d133/equation_b.jpg?raw=true'
     append_message(
         messages, 
         "user",
@@ -46,3 +54,7 @@ def main()
     )
 
     print(response.choices[0])
+
+
+if __name__ == "__main__":
+    main()
