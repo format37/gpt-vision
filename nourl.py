@@ -47,5 +47,10 @@ payload = {
 }
 
 response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+# print(f'response: {response}')
+# response_json = response.json()
+# print(f'response_json: {response_json}')
+# print(f'response_json["choices"]: {response_json["choices"]}')
+
 
 print(response.json())
