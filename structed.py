@@ -5,11 +5,11 @@ from typing import Literal, List, Union, Any
 
 class Student(BaseModel):
     wearing_color: str
-    hand: Literal["raised", "lowered"]
+    hand: Literal["raised", "regular"]
 
 class School(BaseModel):
     scene_description: str
-    participating_students: List[Student]
+    students: List[Student]
 
 def append_message(messages, role, text, image_url, detail):
     messages.append(
@@ -40,7 +40,7 @@ def main():
     text = "Please, solve these equations and tell me what the difference between them."
     messages = []
 
-    image_url = 'https://github.com/format37/gpt-vision/blob/6bbcad3a08657515dd0f078fb58e4c852405d133/equation_a.jpg?raw=true'
+    image_url = 'https://github.com/format37/gpt-vision/blob/ff822d7110578f9e071b874308cfd6a255258fa3/class.jpg?raw=true'
     append_message(
         messages, 
         "user",
@@ -50,11 +50,21 @@ def main():
     )
     # Can be added more images
 
+    school_schema = School.model_json_schema()
+
+    response_format_param = {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "SchoolResponse",  # This name can be any string identifying the response schema
+            "schema": school_schema
+        }
+    }
+
     response = client.chat.completions.create(
         model=model,
         messages=messages,
         max_tokens=2000,
-        response_format=School
+        response_format=response_format_param
     )
 
     print(response.choices[0])
